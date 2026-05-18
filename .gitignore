@@ -1,6 +1,6 @@
 # Python-generated files
 __pycache__/
-migrations/
+# migrations/
 *.py[oc]
 build/
 dist/
