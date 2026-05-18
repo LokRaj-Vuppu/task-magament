@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+  <body style="font-family: Arial; background: #f3f4f6; padding: 30px">
+    <div
+      style="
+        max-width: 900px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      "
+    >
+      <h1 style="text-align: center; color: #2563eb">Task Summary Report</h1>
+
+      <p>Below is the latest task status summary:</p>
+
+      <table
+        width="100%"
+        cellpadding="12"
+        style="border-collapse: collapse; margin-top: 25px"
+      >
+        <tr style="background: #2563eb; color: white">
+          <th>User</th>
+          <th>Yet To Start</th>
+          <th>In Progress</th>
+          <th>On Hold</th>
+          <th>Under Review</th>
+          <th>Completed</th>
+          <th>Cancelled</th>
+          <th>Total</th>
+        </tr>
+
+        {% for user in users %}
+
+        <tr style="border-bottom: 1px solid #e5e7eb">
+          <td>{{user.full_name}}</td>
+
+          <td align="center">{{user.yet_to_start}}</td>
+
+          <td align="center">{{user.in_progress}}</td>
+          
+          <td align="center">{{user.on_hold}}</td>
+
+          <td align="center">{{user.under_review}}</td>
+
+          <td align="center">{{user.completed}}</td>
+
+          <td align="center">{{user.cancelled}}</td>
+
+          <td align="center">
+            <b>{{user.total}}</b>
+          </td>
+        </tr>
+
+        {% endfor %}
+      </table>
+    </div>
+  </body>
+</html>
