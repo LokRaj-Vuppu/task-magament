@@ -294,6 +294,7 @@ Production deployment:
 
 Lok Raj Kumar Vuppu
 
-Backend: Django | DRF | Python  
+Backend: Django | DRF | Python
+
 Frontend: React | React Native  
 DevOps: Docker | AWS
