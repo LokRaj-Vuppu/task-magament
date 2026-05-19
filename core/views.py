@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from app.utils.email_service import EmailService
-from core.models import Task
+from core.models import Task, TaskAttachment
 from core.serializers import (
     CreateTaskRequestValidationSerializer,
     DeleteTaskRequestValidationSerializer,
@@ -67,6 +67,12 @@ class CreateTask(APIView):
                         description=description,
                         priority=priority,
                         status=task_status,
+                    )
+
+                files = request.FILES.getlist("files")
+                if files:
+                    TaskAttachment.objects.bulk_create(
+                        [TaskAttachment(task=task, file=file) for file in files]
                     )
 
                 EmailService.send(

@@ -1,6 +1,14 @@
 from rest_framework import serializers
 
-from core.models import Task, TaskPriority, TaskStatus
+from core.models import Task, TaskAttachment, TaskPriority, TaskStatus
+
+
+class TaskAttachmentSerializer(serializers.ModelSerializer):
+    attachment_uuid = serializers.UUIDField(source="uuid", read_only=True)
+
+    class Meta:
+        model = TaskAttachment
+        fields = ("attachment_uuid", "file", "uploaded_at")
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -8,6 +16,7 @@ class TaskSerializer(serializers.ModelSerializer):
     user_email = serializers.EmailField(source="user.email", read_only=True)
     user_uuid = serializers.UUIDField(source="user.uuid", read_only=True)
     task_uuid = serializers.UUIDField(source="uuid", read_only=True)
+    attachments = TaskAttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Task
@@ -22,10 +31,11 @@ class TaskSerializer(serializers.ModelSerializer):
             "user_name",
             "user_email",
             "user_uuid",
+            "attachments",
         )
 
     def get_user_name(self, obj):
-        return f"{obj.user.full_name}"
+        return obj.user.full_name
 
 
 class CreateTaskRequestValidationSerializer(serializers.Serializer):
