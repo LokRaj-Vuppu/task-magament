@@ -17,8 +17,8 @@ class TestTaskSerializer:
         user = User.objects.create_user(
             email="test@example.com",
             password="password123",
-            full_name="Lok Raj",
-            last_name="Kumar",
+            full_name="Jane Smith",
+            last_name="Doe",
         )
 
         return Task.objects.create(
@@ -51,7 +51,7 @@ class TestTaskSerializer:
     def test_user_name_field(self, task):
         serializer = TaskSerializer(task)
 
-        assert serializer.data["user_name"] == "Lok Raj Kumar"
+        assert serializer.data["user_name"] == "Jane Smith"
 
 
 @pytest.mark.django_db

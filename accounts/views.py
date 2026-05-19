@@ -1,15 +1,20 @@
+import logging
+
+from django.conf import settings
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from accounts.serializers import LoginSerializer, LogoutSerializer, RegisterSerializer
-
-# from accounts.tasks import send_email_on_account_registration
 from app.utils.email_service import EmailService
+
+logger = logging.getLogger(__name__)
 
 
 class RegisterAPIView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
 
@@ -17,7 +22,6 @@ class RegisterAPIView(APIView):
 
         user = serializer.save()
         serialized_user = RegisterSerializer(user).data
-        # Send email from celery
         EmailService.send(
             subject="Welcome",
             recipient=user.email,
@@ -25,10 +29,9 @@ class RegisterAPIView(APIView):
             context={
                 "name": user.full_name or "Customer",
                 "email": user.email,
-                "login_url": "http://localhost:8000/accounts/login",
+                "login_url": f"{settings.FRONTEND_BASE_URL}/accounts/login",
             },
         )
-        # send_email_on_account_registration.delay(user.email, user.full_name)
 
         return Response(
             {
@@ -43,6 +46,8 @@ class RegisterAPIView(APIView):
 
 
 class LoginAPIView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
 
@@ -68,7 +73,7 @@ class LogoutAPIView(APIView):
 
             return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
         except Exception as error:
-            print(f"Exception in Logput API - {error}")
+            logger.exception(f"Exception in Logout API - {error}")
             return Response(
                 {"message": "Something went wrong", "error": str(error)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

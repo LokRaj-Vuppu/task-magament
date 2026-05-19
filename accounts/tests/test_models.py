@@ -10,14 +10,14 @@ class TestUserModel:
         user = User.objects.create_user(
             email="test@example.com",
             password="password123",
-            first_name="Lok",
-            last_name="Raj",
+            first_name="Jane",
+            last_name="Smith",
         )
 
         assert user.id is not None
         assert user.email == "test@example.com"
-        assert user.first_name == "Lok"
-        assert user.last_name == "Raj"
+        assert user.first_name == "Jane"
+        assert user.last_name == "Smith"
 
         # password should be hashed
         assert user.password != "password123"
@@ -59,11 +59,11 @@ class TestUserModel:
         user = User.objects.create_user(
             email="test@example.com",
             password="password123",
-            first_name="Lok",
-            last_name="Raj",
+            first_name="Jane",
+            last_name="Smith",
         )
 
-        expected = "Lok Raj | test@example.com"
+        expected = "Jane Smith | test@example.com"
 
         assert str(user) == expected
 

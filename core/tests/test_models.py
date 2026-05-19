@@ -10,7 +10,7 @@ class TestTaskModel:
     @pytest.fixture
     def user(self):
         return User.objects.create_user(
-            email="test@example.com", password="password123", full_name="Lok Raj"
+            email="test@example.com", password="password123", full_name="Jane Smith"
         )
 
     def test_create_task(self, user):
@@ -38,8 +38,8 @@ class TestTaskModel:
         task = Task.objects.create(user=user, title="Task")
 
         # Your model currently uses strings rather than enum values
-        assert task.priority == "LOW"
-        assert task.status == "YET_TO_START"
+        assert task.priority == "Low"
+        assert task.status == "Yet To Start"
 
     def test_string_representation(self, user):
         task = Task.objects.create(
@@ -49,7 +49,7 @@ class TestTaskModel:
             status=TaskStatus.IN_PROGRESS,
         )
 
-        expected = "Lok Raj | Learn Testing | High | In Progress"
+        expected = "Jane Smith | Learn Testing | High | In Progress"
 
         assert str(task) == expected
 
@@ -65,7 +65,7 @@ class TestTaskAttachmentModel:
     @pytest.fixture
     def task(self):
         user = User.objects.create_user(
-            email="test@example.com", password="password123", full_name="Lok Raj"
+            email="test@example.com", password="password123", full_name="Jane Smith"
         )
 
         return Task.objects.create(user=user, title="Task")
@@ -97,7 +97,7 @@ class TestTaskAttachmentModel:
 
         string_repr = str(attachment)
 
-        assert "Lok Raj" in string_repr
+        assert "Jane Smith" in string_repr
         assert ".pdf" in string_repr
 
     def test_delete_task_deletes_attachment(self, task):

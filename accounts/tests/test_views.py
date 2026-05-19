@@ -21,7 +21,7 @@ class TestRegisterAPI:
             "email": "test@example.com",
             "password": "password123",
             "confirm_password": "password123",
-            "full_name": "Lok Raj",
+            "full_name": "Jane Smith",
         }
 
         response = self.client.post(self.url, payload, format="json")
@@ -43,7 +43,7 @@ class TestRegisterAPI:
             "email": "test@example.com",
             "password": "password123",
             "confirm_password": "wrongpassword",
-            "full_name": "Lok Raj",
+            "full_name": "Jane Smith",
         }
 
         response = self.client.post(self.url, payload, format="json")
@@ -62,7 +62,7 @@ class TestRegisterAPI:
             "email": "test@example.com",
             "password": "password123",
             "confirm_password": "password123",
-            "full_name": "Lok Raj",
+            "full_name": "Jane Smith",
         }
 
         response = self.client.post(self.url, payload, format="json")

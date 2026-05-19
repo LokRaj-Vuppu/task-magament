@@ -29,13 +29,11 @@ class Task(TimeStampsForModels):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     priority = models.CharField(
-        max_length=20, choices=TaskPriority.choices, default="LOW"
+        max_length=20, choices=TaskPriority.choices, default=TaskPriority.LOW
     )
     status = models.CharField(
-        max_length=20, choices=TaskStatus.choices, default="YET_TO_START"
+        max_length=20, choices=TaskStatus.choices, default=TaskStatus.YET_TO_START
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = "tasks"

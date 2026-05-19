@@ -1,3 +1,6 @@
+import logging
+
+from django.conf import settings
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -13,6 +16,8 @@ from core.serializers import (
     UpdateTaskRequestValidationSerializer,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def home(request):
     return render(request, "core/index.html")
@@ -23,7 +28,6 @@ class GetAllTasks(APIView):
 
     def get(self, request):
         try:
-            print(f"Request Data - {request.data}")
             tasks = Task.objects.filter(user=request.user)
             tasks_serialized = TaskSerializer(tasks, many=True).data
             return Response(
@@ -31,7 +35,7 @@ class GetAllTasks(APIView):
                 status=status.HTTP_200_OK,
             )
         except Exception as error:
-            print(f"Exception in GetAllTasks API - {error}")
+            logger.exception(f"Exception in GetAllTasks API - {error}")
             return Response(
                 {"message": "Something went wrong", "error": str(error)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -43,7 +47,6 @@ class CreateTask(APIView):
 
     def post(self, request):
         try:
-            print(f"Request - {request.data}")
             request_data = CreateTaskRequestValidationSerializer(data=request.data)
             if request_data.is_valid():
                 title = request_data.validated_data["title"]
@@ -51,7 +54,6 @@ class CreateTask(APIView):
                 priority = request_data.validated_data.get("priority")
                 task_status = request_data.validated_data.get("status")
 
-                # Create Task
                 try:
                     Task.objects.get(title=title, user=request.user)
                     return Response(
@@ -59,7 +61,6 @@ class CreateTask(APIView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 except Task.DoesNotExist:
-                    # setup celery and send email to the user
                     task = Task.objects.create(
                         title=title,
                         user=request.user,
@@ -68,7 +69,6 @@ class CreateTask(APIView):
                         status=task_status,
                     )
 
-                # Email trigger from Celery
                 EmailService.send(
                     subject="🎉 Task Created Successfully",
                     recipient=request.user.email,
@@ -79,26 +79,19 @@ class CreateTask(APIView):
                         "task_description": task.description,
                         "priority": task.priority,
                         "status": task.status,
-                        "dashboard_url": "http://localhost:8000/tasks/get/",
+                        "dashboard_url": f"{settings.FRONTEND_BASE_URL}/tasks/get/",
                     },
                 )
                 return Response(
                     {"message": "Task is created"}, status=status.HTTP_201_CREATED
                 )
-
-                # task_details , created = Task.objects.get_or_create(title=title, user=request.user,
-                #                         description=description,
-                #                         priority=priority, status=task_status)
-                # if created:
-                #     return Response({'message': 'Task is created'}, status=status.HTTP_201_CREATED)
-                # return Response({'message': 'Task already exists with given title'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(
                     {"message": "Invalid Request Data", "errors": request_data.errors},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except Exception as error:
-            print(f"Exception in CreateTask API - {error}")
+            logger.exception(f"Exception in CreateTask API - {error}")
             return Response(
                 {"message": "Something went wrong", "error": str(error)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -110,7 +103,6 @@ class UpdateTask(APIView):
 
     def patch(self, request):
         try:
-            print(f"Request Data - {request.data}")
             request_data = UpdateTaskRequestValidationSerializer(
                 data=request.data, partial=True
             )
@@ -118,7 +110,7 @@ class UpdateTask(APIView):
                 task_uuid = request_data.validated_data.get("task_uuid")
 
                 try:
-                    task = Task.objects.get(uuid=task_uuid)
+                    task = Task.objects.get(uuid=task_uuid, user=request.user)
                 except Task.DoesNotExist:
                     return Response(
                         {"message": "Task not found"}, status=status.HTTP_404_NOT_FOUND
@@ -144,7 +136,7 @@ class UpdateTask(APIView):
                         "task_description": task.description,
                         "priority": task.priority,
                         "status": task.status,
-                        "dashboard_url": "http://localhost:8000/tasks",
+                        "dashboard_url": f"{settings.FRONTEND_BASE_URL}/tasks",
                     },
                 )
 
@@ -157,7 +149,7 @@ class UpdateTask(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except Exception as error:
-            print(f"Exception in UpdateTask API - {error}")
+            logger.exception(f"Exception in UpdateTask API - {error}")
             return Response(
                 {"message": "Something went wrong", "error": str(error)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -169,19 +161,18 @@ class DeleteTask(APIView):
 
     def delete(self, request):
         try:
-            print(f"Request Data - {request.data}")
             request_data = DeleteTaskRequestValidationSerializer(data=request.data)
             if request_data.is_valid():
                 task_uuid = request_data.validated_data.get("task_uuid")
                 try:
-                    task = Task.objects.get(uuid=task_uuid)
+                    task = Task.objects.get(uuid=task_uuid, user=request.user)
                     email_context = {
                         "name": request.user.full_name or "Customer",
                         "task_title": task.title,
                         "task_description": task.description,
                         "priority": task.priority,
                         "status": task.status,
-                        "dashboard_url": "http://localhost:8000/tasks",
+                        "dashboard_url": f"{settings.FRONTEND_BASE_URL}/tasks",
                     }
 
                     task.delete()
@@ -206,7 +197,7 @@ class DeleteTask(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except Exception as error:
-            print(f"Exception in UpdateTask API - {error}")
+            logger.exception(f"Exception in DeleteTask API - {error}")
             return Response(
                 {"message": "Something went wrong", "error": str(error)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

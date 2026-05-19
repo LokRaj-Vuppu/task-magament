@@ -16,7 +16,7 @@ class TestTaskViews:
         self.client = APIClient()
 
         self.user = User.objects.create_user(
-            email="test@example.com", password="password123", full_name="Lok Raj"
+            email="test@example.com", password="password123", full_name="Jane Smith"
         )
 
         refresh = RefreshToken.for_user(self.user)

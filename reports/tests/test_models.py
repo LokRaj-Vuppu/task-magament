@@ -9,7 +9,7 @@ class TestReportModel:
     @pytest.fixture
     def user(self):
         return User.objects.create_user(
-            email="test@example.com", password="password123", full_name="Lok Raj"
+            email="test@example.com", password="password123", full_name="Jane Smith"
         )
 
     def test_create_report(self, user):

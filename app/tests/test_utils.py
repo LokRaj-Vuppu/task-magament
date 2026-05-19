@@ -13,10 +13,10 @@ class TestEmailService:
             subject="Welcome",
             recipient="test@example.com",
             template_name="emails/test.html",
-            context={"name": "Lok Raj"},
+            context={"name": "Jane Smith"},
         )
 
-        mock_render.assert_called_once_with("emails/test.html", {"name": "Lok Raj"})
+        mock_render.assert_called_once_with("emails/test.html", {"name": "Jane Smith"})
 
         mock_delay.assert_called_once_with(
             subject="Welcome",

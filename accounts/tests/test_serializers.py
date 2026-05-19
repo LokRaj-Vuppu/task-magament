@@ -12,7 +12,7 @@ class TestRegisterSerializer:
             "email": "test@example.com",
             "password": "password123",
             "confirm_password": "password123",
-            "full_name": "Lok Raj",
+            "full_name": "Jane Smith",
         }
 
         serializer = RegisterSerializer(data=data)
@@ -24,7 +24,7 @@ class TestRegisterSerializer:
             "email": "test@example.com",
             "password": "password123",
             "confirm_password": "differentpassword",
-            "full_name": "Lok Raj",
+            "full_name": "Jane Smith",
         }
 
         serializer = RegisterSerializer(data=data)
@@ -37,7 +37,7 @@ class TestRegisterSerializer:
             "email": "test@example.com",
             "password": "password123",
             "confirm_password": "password123",
-            "full_name": "Lok Raj",
+            "full_name": "Jane Smith",
         }
 
         serializer = RegisterSerializer(data=data)
@@ -67,7 +67,7 @@ class TestRegisterSerializer:
             "email": "test@example.com",
             "password": "12",
             "confirm_password": "12",
-            "full_name": "Lok Raj",
+            "full_name": "Jane Smith",
         }
 
         serializer = RegisterSerializer(data=data)

@@ -45,15 +45,16 @@ class RegisterSerializer(serializers.ModelSerializer):
             full_name=validated_data["full_name"],
         )
 
+        user._refresh_token = RefreshToken.for_user(user)
         return user
 
     def get_access(self, obj):
-        refresh = RefreshToken.for_user(obj)
-        return str(refresh.access_token)
+        token = getattr(obj, "_refresh_token", None) or RefreshToken.for_user(obj)
+        return str(token.access_token)
 
     def get_refresh(self, obj):
-        refresh = RefreshToken.for_user(obj)
-        return str(refresh)
+        token = getattr(obj, "_refresh_token", None) or RefreshToken.for_user(obj)
+        return str(token)
 
 
 class LoginSerializer(serializers.Serializer):

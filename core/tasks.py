@@ -1,5 +1,5 @@
 # CELERY BEAT
-
+import os
 from celery import shared_task
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -28,7 +28,7 @@ def send_task_summary_report():
         subject="Task Summary Report",
         body="Task summary report",
         from_email=settings.DEFAULT_FROM_EMAIL,
-        to=["lokrajkumarv@gmail.com"],
+        to=[os.getenv('ADMIN_EMAIL_ID_FOR_REPORTS')],
         cc=[
             # "manager@example.com",
             # "lead@example.com"

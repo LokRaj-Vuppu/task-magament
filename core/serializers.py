@@ -25,7 +25,7 @@ class TaskSerializer(serializers.ModelSerializer):
         )
 
     def get_user_name(self, obj):
-        return f"{obj.user.full_name} {obj.user.last_name}"
+        return f"{obj.user.full_name}"
 
 
 class CreateTaskRequestValidationSerializer(serializers.Serializer):
